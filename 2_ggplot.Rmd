@@ -22,11 +22,11 @@ Now we will learn how to visualise your data using `ggplot2.` R has several syst
 
 ![Art credit: Allison Horst](doc/ggplot_horst.jpeg){width=50%}
 
-To use `ggplot2`', we start by loading the `tidyverse.` Note again, that you could just load the package `ggplot2` and that would also give you access to all of the `ggplot2` functions. However, by loading the `tidyverse` we can get ggplot2 and dplyr loaded at the same time (as well as some other packages that data scientists frequently like to use). Let's also load up our Antarctic penguins dataset:
+To use `ggplot2`, we start by loading the `tidyverse.` Note again, that you could just load the package `ggplot2` and that would also give you access to all of the `ggplot2` functions. However, by loading the `tidyverse` we can get ggplot2 and dplyr loaded at the same time (as well as some other packages that data scientists frequently like to use). Let's also load up our Antarctic penguins dataset:
 
-```{r, warning=FALSE, message=FALSE}
-library(tidyverse)
+```{r}
 library(palmerpenguins)
+library(tidyverse)
 ```
 
 ### Note about namespaces:
@@ -45,7 +45,7 @@ Let's say you actually wanted to use the `stats` package version of filter. You 
 stats::filter
 ```
 
-In many of my scripts, I use `dplyr`'s `select()` function to choose which columns I am interested in keeping. However, one of the other packages I frequently use has a `select()` function, so I need to specify the dplyr package before calling `select()`:
+In many of my scripts, I use `dplyr`'s `select()` function to choose which columns I am interested in keeping. However, one of the other packages I frequently use also has a `select()` function, so I need to specify the dplyr package before calling `select()`:
 
 ```{r}
 species_islands = penguins %>% dplyr::select(species, island)
@@ -63,9 +63,9 @@ ggplot(data=penguins)
 
 You complete your graph by adding one or more layers to `ggplot()` with the addition operator `+`. The function `geom_point()` adds a layer of points to your plot, which creates a scatterplot. `ggplot2` comes with many geom functions that each add a different type of layer to a plot. We’ll learn a whole bunch of them throughout this lesson
 
-Each geom function in `ggplot2` takes a mapping argument. The visual properties in the plot are mapped onto your dataset using the aesthetics mapping function `aes()` inside of the geom function. That's a fancy way of saying you use aes() to choose which variable in the data you want to be plotted along the x axis, and which you want to be plotted along the y axis. 
+Each geom function in `ggplot2` takes a mapping argument. The visual properties in the plot are mapped onto your dataset using the aesthetics mapping function `aes()` inside of the geom function. That's a fancy way of saying you use `aes()` to choose which variable in the data you want to be plotted along the x axis, and which variable you want to be plotted along the y axis. 
 
-Let's use `ggplot2` to visualize the relationship between penguin body mass and penguin flipper length. But before we do anything, let's take a peek at the data to remind ourselves of the variable names and types. I usually use head() or summary(), but glimpse() is another function for peeking at your data that comes in the tidyverse:
+Let's use `ggplot2` to visualize the relationship between penguin body mass and penguin flipper length. But before we do anything, let's take a peek at the data to remind ourselves of the variable names and types. I usually use `head()` or `summary()`, but `glimpse()` is another function for peeking at your data that comes in the tidyverse:
 
 ```{r}
 glimpse(penguins)
@@ -99,6 +99,13 @@ I wonder how the mass / flipper length relationship plays out for the three diff
 ```{r}
 ggplot(data=penguins) + 
   geom_point(aes(x=flipper_length_mm, y=body_mass_g, color=species))
+```
+
+We can even change the point shape to correspond with the species, so that this figure will work in color or black-and-white prints:
+
+```{r}
+ggplot(data=penguins) + 
+  geom_point(aes(x=flipper_length_mm, y=body_mass_g, color=species, shape=species))
 ```
 
 Ok, so the mass vs. flipper length relationship looks pretty similar across all three species, but Gentoo penguins are bigger than Adelie and Chinstrap. That's a handy little color legend that `ggplot` made for us automatically, but every part of the legend can be customized if you need it to be. 
@@ -140,7 +147,7 @@ In this penguin dataset, data were only collected in 2007-2009, so there is a ve
 penguin_ts = penguins %>%
   group_by(species, year) %>%
   summarize(n=n())
-
+                
 ggplot(data=penguin_ts) +
   geom_line(aes(x=year, y=n, color=species))
 ```
@@ -217,11 +224,11 @@ ggplot(penguins) +
   coord_flip()
 ```
 
-Well, I'm glad we made that figure. Now I can easily see that Adelie were found on three islands, but Gentoo and Chinstrap were each only found on one island. That's pretty important background information if I'm going to run an analysis on these penguins. When working with new data, it's really smart to visualize it in many different ways to get to know the distributions, what's missing, and the general idiosyncracies of the dataset. Some of your exploratory graphs may be useful to put into a presentation when you are sharing your data with a group. Occassionally, these data graphs may even be important enough to publish in the papers you write.
+Well, I'm glad we made that figure. Now I can easily see that Adelie were found on three islands, but Gentoo and Chinstrap were each only found on one island. That's pretty important background information if I'm going to run an analysis on these penguins. When working with new data, it's really smart to visualize it in many different ways to get to know the distributions, what's missing, and the general idiosyncracies of the dataset. Some of your exploratory graphs may be useful to put into a presentation when you are sharing your data with a group. Occasionally, these data graphs may even be important enough to publish in the papers you write.
 
 ### Saving ggplots
 
-Since I found the species osbervation distribution across the three islands a bit surprising, I'm going to save this graph so that I can refer back to it later. I can do this by just adding one more "layer" to the ggplot to save it:
+Since I found the species observation distribution across the three islands a bit surprising, I'm going to save this graph so that I can refer back to it later. I can do this by calling the `ggsave()` function to write out the last plot I created:
 
 ```{r}
 ggplot(penguins) +
@@ -232,9 +239,9 @@ ggsave(filename = "figures/penguin_species_per_island.png",
        device = "png", width = 5, height = 4, units = "in", dpi = 300)
 ```
 
-For this figure, I decided to save it as a `.png`, and I provided a width and height for the figure in units of inches. I also specified that I wanted the output to have a high resolution of 300 dots per inch. I didn't need to include that since `dpi=300` is the default, but now you see how to change it. Note, I also didn't need to specify "png" for the device because ggplot would have been smart enough to notice that my filename endds in ".png". I was just being very explicit here.
+For this figure, I decided to save it as a `.png`, and I provided a width and height for the figure in units of inches. I also specified that I wanted the output to have a high resolution of 300 dots per inch. I didn't need to include that since `dpi=300` is the default, but now you see how to change it. Note, I also didn't need to specify "png" for the device because ggplot would have been smart enough to notice that my file name ends in ".png". I was just being very explicit here.
 
-There are tons of options for saving your figures, and you can look through the ggsave() documentation to learn more. (Remember, do this by clicking on the `Help` tab in the lower-right hand pane of RStudio and typing ggsave into the search bar, or simply type `?ggsave` into the console).
+There are tons of options for saving your figures, and you can look through the ggsave() documentation to learn more. (Remember, do this by clicking on the `Help` tab in the lower-right hand pane of RStudio and typing `ggsave` into the search bar, or simply type `?ggsave` into the console).
 
 I often save my figures as `.png` files because they have "lossless compression". That means that when I import my `.png` figures into a powerpoint and then move my powerpoint onto a different device (such as loading it onto large conference software before presenting at AGU), I don't wind up with crappy low-resolution figures. I have been burned in the past for embedding `.jpg` or `.pdf` figures. However, if I want to bring a saved figure into a different type of software for additional editing (like Adobe Illustrator), I like to save my original figures as `.pdf` because it can be easier to interact with distinct features of the graph, change fonts, etc.
 
@@ -252,7 +259,7 @@ https://www.nceas.ucsb.edu/sites/default/files/2020-04/colorPaletteCheatsheet.pd
 
 ### Customizing aesthetics
 
-I used the `scale_fill_manual()` function earlier so that I could choose the exact colors that I wanted to fill in the bars of my histogram. There is a lot of functionality in this type of function (check the documentation). If you are asking yourself, "Can I change something very specific about how this figure looks?", chances are, you can. In fact, there is a whole suite of functions in ggplot that start with "scale_" followed by an aesthetic (x, y, color, fill, etc.) that you are trying to customize. Look at the `ggplot` cheat sheet to get a quick sense of the broad functionality.
+I used the `scale_fill_manual()` function earlier so that I could choose the exact colors that I wanted to fill in the bars of my histogram. There is a lot of functionality in `ggplot2` (check the documentation). If you are asking yourself, "Can I change something very specific about how this figure looks?", chances are, you can. In fact, there is a whole suite of functions in ggplot that start with "scale_" followed by an aesthetic (x, y, color, fill, etc.) that you are trying to customize. Look at the `ggplot2` cheat sheet to get a quick sense of the broad functionality.
 
 ### Themes
 
