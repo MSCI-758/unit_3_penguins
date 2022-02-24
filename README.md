@@ -9,6 +9,14 @@ This unit will cover data manipulation and visualization using the `Tidyverse` s
 
 ***
 
+#### Homework: 
+
+-  HW_4_t-tests - Assigned: 2/22/2022, Due: 3/1/2022
+
+HW4 repo link: https://classroom.github.com/a/IfdMgCHo
+
+***
+
 #### Lesson 1: Intro to dplyr (data manipulation)
 
 New functions: 
