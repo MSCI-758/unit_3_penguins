@@ -36,7 +36,7 @@ summary(lm_good)
 
 #### Using p-value to check for statistical significance of model
 
-The summary statistics (i.e. `summary(lm_bad)`) above tell us the model’s p-value (in the last line) and the p-Value of individual predictor variables (extreme right column under `Coefficients`). We can consider a linear model to be statistically significant only when both these p-values are less than the pre-determined statistical significance level of 0.05. This can visually interpreted by the significance stars at the end of the row against each X variable. The more the stars beside the variable�s p-Value, the more significant the variable.
+The summary statistics (i.e. `summary(lm_bad)`) above tell us the model’s p-value (in the last line) and the p-Value of individual predictor variables (extreme right column under `Coefficients`). We can consider a linear model to be statistically significant only when both these p-values are less than the pre-determined statistical significance level of 0.05. This can be visually interpreted by the significance asterisks at the end of the row against each X variable. The more the asterisks beside the variable's p-value, the more significant the variable.
 
 What is the Null and Alternate Hypothesis?
 Whenever there is a p-value, there is always a Null and Alternate Hypothesis associated. In Linear Regression: 
@@ -44,7 +44,7 @@ Whenever there is a p-value, there is always a Null and Alternate Hypothesis ass
 -  Null Hypothesis (H0) is that the beta coefficients associated with the variables is equal to zero.
 -  Alternate hypothesis (H1) is that the coefficients are not equal to zero. (i.e. there exists a relationship between the independent variable in question and the dependent variable).
 
-When the p-value is less than significance level ($\alpha < 0.05$), you can safely reject the null hypothesis that the co-efficient of the predictor is zero. In our case, the model and coefficient p-values of both `lm_good` and `lm_bad` are all well below the 0.05 threshold. So, you can reject the null hypothesis and conclude the model is indeed statistically significant.
+When the p-value is less than significance level (alpha < 0.05), you can safely reject the null hypothesis that the coefficient of the predictor is zero. In our case, the model and coefficient p-values of both `lm_good` and `lm_bad` are all well below the 0.05 threshold. So, you can reject the null hypothesis and conclude the model is indeed statistically significant.
 
 #### R-Squared and Adj R-Squared
 
@@ -58,7 +58,7 @@ Neither of our models  have a high $R^2$: `lm_good` $Adjusted R^2 = 0.07875$  an
 #### Seven Major Assumptions of Linear Regression Are:
 
 1. The relationship between all X’s and Y is linear. Violation of this assumption leads to changes in regression coefficient estimation.
-2. All necessary independent variables are included in the regression that are specified by existing theory and/or research ("omitted variable bias"). This asusmption serves the purpose of saving us from making large claims when we simply have failed to account for (a) better predictor(s) which may share variance with other predictors. This will not be covered in this tutorial as meeting this assumption is up to your discretion as a researcher, dependent on knowledge of your specific research topic and question.
+2. All necessary independent variables are included in the regression that are specified by existing theory and/or research ("omitted variable bias"). This asusmption serves the purpose of saving us from making large claims when we simply have failed to account for better predictor(s) which may share variance with other predictors. This will not be covered in this tutorial as meeting this assumption is up to your discretion as a researcher, dependent on knowledge of your specific research topic and question.
 3. There is no error in our measurements of X. This assumption is almost always violated. This will typically downward bias (make smaller) the regression coefficients in your model. This will not be covered in this tutorial as meeting this assumption is nearly impossible. If you are interested in Model-II regression (where there is error in the measurement of the independent variables as well as the dependent variables), the `lmodel2` package can run a variety of model 2 regressions, plot them, calculate confidence intervals, and perform statistical tests.
 4. There is constant variance across the range of residuals for each X (this is sometimes referred to as homoscedasticity, whereas violations are termed heteroscedastic).
 5. Residuals are independent from one another (i.e. no autocorrelation). Residuals cannot be associated for any subgroup of observations. Multilevel modeling is a more appropriate generalized form of regression which is able to handle dependencies in model error structures.
@@ -120,7 +120,7 @@ spreadLevelPlot(lm_bad)
 ncvTest(lm_bad)
 ```
 
-For `lm_bad`, the spreadLevelPlot() is a bit more concerning because there is a clear non-linear shape to the loess smoother (the pink line). The `ncvTest()` result has a p-value<0.05, so we have heteroscedasticity. If you are interested in going forward with a model that has heterscedasticity, and your other assumptions aren't problematic, you can present your model results with robust standard errors. One way to calculate robust standard errors is using the `robust()` function in the `sjstats` package.
+For `lm_bad`, the spreadLevelPlot() is a bit more concerning because there is a clear non-linear shape to the loess smoother (the pink line). The `ncvTest()` result has a p-value<0.05, so we have heteroscedasticity. If you are interested in going forward with a model that has heteroscedasticity, and your other assumptions aren't problematic, you can present your model results with robust standard errors. One way to calculate robust standard errors is using the `robust()` function in the `sjstats` package.
 
 #### Checking the assumption of normality of residuals
 
@@ -134,25 +134,25 @@ For `lm_good`, we can see the that each observation roughly falls on the straigh
 
 ```{r}
 # Normality of Residuals: qq plot for studentized resid
-car::qqPlot(lm_good, main="lm_bad") # distribution of studentized residuals
+car::qqPlot(lm_bad, main="lm_bad") # distribution of studentized residuals
 ```
 
-For `lm_bad` the observations wiggle around the straight line in a more severe S-shape curve, and many of the points fall outside of the 95% confidence intervals. These residuals don't look very normal.
+For `lm_bad` the observations wiggle around the straight line in a bit more of an S-shape curve, and some of the points fall outside of the 95% confidence intervals. These residuals don't look as normal.
 
 #### Checking for multicollinearity (in multiple regression)
 
-If your linear regression has more than one explanatory variable, the X's should not be very tightly correlated. One of the primary indicators of multicollinearity is the variance inflation factor (VIF). The VIF indicates the amount of increase in variance of regression coefficient relative to when all predictors are uncorrelated. If the VIF of a variable is high, it means the variance explained by that variable is already explained by other X variables present in the given model, which means that variable is likely redundant. The lower the VIF, the better. If the VIF is less some threshold, we meet the assumption of no multicollinearity. Common VIF thresholds are 3, 5 and 10, where the smaller thresholds are more conservative. 
+If your linear regression has more than one explanatory variable, the X's should not be very tightly correlated. One of the primary indicators of multicollinearity is the variance inflation factor (VIF). The VIF indicates the amount of increase in variance of regression coefficient relative to when all predictors are uncorrelated. If the VIF of a variable is high, it means the variance explained by that variable is already explained by other X variables present in the given model, which means that variable is likely redundant. The lower the VIF, the better. If the VIF is less than some threshold, we meet the assumption of no multicollinearity. Common VIF thresholds are 3, 5 and 10, where the smaller thresholds are more conservative. 
 
-So far in this lesson, we have just been looking at simple regression. To demonstrate how you could check the assumption of multicolinearity, we can build a quick multiple regression model and run the `vif()` function from the `car` package.
+So far in this lesson, we have just been looking at simple regression. To demonstrate how you could check the assumption of multicollinearity, we can build a quick multiple regression model and run the `vif()` function from the `car` package.
 
 ```{r}
 lm_multi = lm(bill_depth_mm ~ bill_length_mm + body_mass_g, data=gentoo_males)
 vif(lm_multi)
 ```
 
-It appears that the VIF for both of our predictors is less than 3, so we have definitely met the assumption of multicollinearity for this model. 
+It appears that the VIF for both of our predictors is less than 3, so we have definitely met the assumption of "no multicollinearity" for this model. 
 
-If you are testing collinearity with a more complex model, such as one that includes a categorical variable, the vif() function will return Generalized Variation Inflation Factors (GVIF) and $GVIF^(1/(2*df)$. You can apply the test by squaring the  $GVIF^(1/(2*df)$ and applying that value to the same VIF threshold that you like to use, i.e. 3, 5 or 10, depending on how conservative you want to be.
+If you are testing multicollinearity with a more complex model, such as one that includes a categorical variable, the vif() function will return Generalized Variation Inflation Factors (GVIF), which is the variance inflation factor corrected for the number of degrees of freedom in your data, where $GVIF = VIF^{1/(2*df)}$. You can apply the test by squaring the  $GVIF$ and applying that value to the same VIF threshold that you like to use, i.e. 3, 5 or 10, depending on how conservative you want to be.
 
 If there is multicollinearity present in your model and you violate this assumption, however, you have the options of:
 
@@ -176,7 +176,7 @@ The p-value is greater than 0.05, so we can accept the null hypothesis that the 
 durbinWatsonTest(lm_bad)
 ```
 
-the p-value is < 0.05, so we reject the null hypothesis and find that our data ARE autocorrelated. Again, this is a nonsensical test given our data, however, they are reading as autocorrelated because our data are listed in order by species. So the first part of the data all look similar becuase they are all Adelie penguins. The second group of the data are all Gentoo, and the third group are all Chinstrap. That makes the data look autocorrelated.
+the p-value is < 0.05, so we reject the null hypothesis and find that our data ARE autocorrelated. Again, this is a nonsensical test given our data, however, they are reading as autocorrelated because our data are listed in order by species. So the first part of the data all look similar because they are all Adelie penguins. The second group of the data are all Gentoo, and the third group are all Chinstrap. So there is unaccounted for structure in the data that mimics autocorrelation (which is a violation of another assumption - omitted variable bias). 
 
 If you find you legitimately have autocorrelation, you can identify your lag and use Newey-West robust standard errors.
 

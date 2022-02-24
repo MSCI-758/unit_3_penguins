@@ -42,7 +42,7 @@ Here are some plots you want to look at before building a linear regression mode
 -  Q-Q plot: Also good for checking normality of your predictor variable
 -  Correlation matrix (like `GGally::ggpairs()`) to check for multicollinearity in your explanatory variables
 
-If you do encounter some problems with your data, there are many solutions that can help make linear regression an appropriate analysis. For example, if your explanatory variables aren't normal or you have heterscedasticity, a nonlinear transformation (such as `log(x)`, `x^2` or `sqrt(x)` ) may solve the issue. Heteroscedasticity can also be dealt with by calculating robust standard errors for your linear model coefficients. If you have some nasty outliers, think about whether you might be (scientifically) justified in removing them from the dataset. If several of your explanatory variables are correlated, you can consider removing some of them using stepwise regression. These will be covered in detail in a statistics class.
+If you do encounter some problems with your data, there are many solutions that can help make linear regression an appropriate analysis. For example, if your explanatory variables aren't normal or you have heteroscedasticity, a nonlinear transformation (such as `log(x)`, `x^2` or `sqrt(x)` ) may solve the issue. Heteroscedasticity can also be dealt with by calculating robust standard errors for your linear model coefficients. If you have some nasty outliers, think about whether you might be (scientifically) justified in removing them from the dataset. If several of your explanatory variables are correlated, you can consider removing some of them using stepwise regression. These will be covered in detail in a statistics class.
 
 ### Simple linear regression
 
@@ -127,7 +127,7 @@ ggplot(data=gentoo, aes(x = bill_length_mm, y = bill_depth_mm)) +
      geom_smooth(method = "lm")
 ```
 
-This trend looks a little better to me. The R-squared = 0.41, so the model explains about 41% of the variation. That's pretty impressive considering we only have one variable in there. Also, the model passes the sanity check because it seems logical that bill depth will increase with increasing bill length. 
+This trend looks a little better to me. The R-squared = 0.4139 (which is equal to the square of the Pearson correlation coefficient r) and the adjusted R-squared = 4.091 (here the R-squared value has been adjusted to account for model complexity, or the number of parameters in our linear model). So the model explains about 41% of the variation in bill depth. That's pretty impressive considering we only have one variable in there. Also, the model passes the sanity check because it seems logical that bill depth will increase with increasing bill length. 
 
 We can actually use geom_smooth() to examine separate linear models for each of the three penguin species at once without formally running the regression:
 
@@ -139,7 +139,7 @@ ggplot(data=penguins) +
     
 ```
 
-So that makes it very clear that running all three species together was a serious logical error, and it produced a completely untrue result that bill depth increases as bill length decreases In fact, when we split the three species apart, we can see that bill depth increases with increasing bill length (as you'd expect) and the relationships look pretty similar for each species. This is an example of *Simpson's paradox*, which occurs when trends that appear when a dataset is separated into groups reverse when the data are aggregated. Basically, when doing statistics, you want to use your brain and your gut to build models that make sense.
+So that makes it very clear that running all three species together was a serious logical error, and it produced a completely untrue result that bill depth increases as bill length decreases. In fact, when we split the three species apart, we can see that bill depth increases with increasing bill length (as you'd expect) and the relationships look pretty similar for each species. This is an example of *Simpson's paradox*, which occurs when trends that appear when a dataset is separated into groups reverse when the data are aggregated. Basically, when doing statistics, you want to use your brain and your gut to build models that make sense.
 
 ***
 

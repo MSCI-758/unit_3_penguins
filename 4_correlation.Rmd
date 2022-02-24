@@ -61,9 +61,9 @@ cor.test(x=gentoo$bill_length_mm, y=gentoo$bill_depth_mm, use="complete.obs") # 
 ```
 Interpreting Pearson's r:
 
--  -1 indicates a strong negative correlation : this means that every time x increases, y decreases (left panel figure)
--  0 means that there is no association between the two variables (x and y) (middle panel figure)
--  1 indicates a strong positive correlation : this means that y increases with x (right panel figure)
+-  -1 indicates a strong negative correlation : this means that every time x increases, y decreases
+-  0 means that there is no association between the two variables (x and y)
+-  1 indicates a strong positive correlation : this means that y increases with x
 
 So for bill length vs. bill depth, Pearson's r = 0.64. That's a pretty solid correlation coefficient - those two variables definitely have a (positive) linear relationship. From cor.test() we can see that the p-value is much less than 0.05, so the correlation is "significant". 
 
@@ -96,7 +96,7 @@ gentoo %>%
   ggpairs()
 ```
 
-If we wanted to be really fancy, we can run ggpairs() on the complete dataset rather than just the Gentoo penguins. To keep the species separated in our correlation matrix, we can map the species variable to a color:
+If we wanted to be really fancy, we can run `ggpairs()` on the complete dataset rather than just the Gentoo penguins. To keep the species separated in our correlation matrix, we can map the species variable to a color:
 
 ```{r, fig.height = 7, fig.width = 9, message=FALSE, warning=FALSE}
 penguins %>%
