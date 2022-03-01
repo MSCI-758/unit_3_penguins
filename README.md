@@ -15,6 +15,10 @@ This unit will cover data manipulation and visualization using the `Tidyverse` s
 
 HW4 repo link: https://classroom.github.com/a/IfdMgCHo
 
+-  Final project proposal - Assigned 3/1/2022, Due: 3/22/2022
+
+Final project repo link: https://classroom.github.com/a/Yecjwuvi
+
 ***
 
 #### Lesson 1: Intro to dplyr (data manipulation)
