@@ -333,7 +333,7 @@ lm_4 = lm(bill_depth_mm ~ bill_length_mm*species, data=penguins_lm_3)
 # lm_4 = lm(bill_depth_mm ~ bill_length_mm + species + bill_length_mm * species, data=penguins_lm_3) # Equivalent model formula
 ```
 
-Note that `bill_length_mm*species` is short-hand for `bill_length_mm + species + bill_length_mm * species`. Interaction terms are coded this way because when you build a model with an interaction, it is important to always include the interacting variables on their own as well. You wouldn't want a model that looked like `bill_depth_mm ~ bill_length_mm X species` without including bill length and species as additional terms because then the interaction coefficients would be tasked with accounting for all of the variation from each of those two independent variables in addition to the interaction between those variables. This would make interpretation difficult and may bias our understanding of the importance of the interaction. If you want to model the interaction of two independent variables, but suppress the inclusion of those variables on their own, you can use a `:` in the model formula instead (i.e. `bill_depth_mm ~ bill_length_mm:species`). Please think critically and exercise caution if you choose to build this type of model.
+Note that `bill_length_mm*species` is short-hand for `bill_length_mm + species + bill_length_mm X species`. Interaction terms are coded this way because when you build a model with an interaction, it is important to always include the interacting variables on their own as well. You wouldn't want a model that looked like `bill_depth_mm ~ bill_length_mm X species` without including bill length and species as additional terms because then the interaction coefficients would be tasked with accounting for all of the variation from each of those two independent variables in addition to the interaction between those variables. This would make interpretation difficult and may bias our understanding of the importance of the interaction. If you want to model the interaction of two independent variables, but suppress the inclusion of those variables on their own, you can use a `:` in the model formula instead (i.e. `bill_depth_mm ~ bill_length_mm:species`). Please think critically and exercise caution if you choose to build this type of model.
 
 If we look at the model results for `lm_3` side by side with `lm_4`, we can see that the inclusion of the interaction term is not helping our model very much. The $R^2$ measure barely improves with `lm_4`, and the $Adjusted-R^2$ measure is actually lower. This is because the $Adjusted-R^2$ measure is calculated from the $R^2$ measure, but it includes a penalty for model complexity (i.e. for each additional model coefficient). None of the interaction coefficients in `lm_4` are statistically significant. 
 
@@ -356,25 +356,23 @@ If we plotted the `lm_4` predictions for each of the 3 species, the lines will p
 # Plotting predictions with ggPredict(): 
 # ggPredict(lm_4, se=TRUE, interactive=TRUE)  # easy, but less customizable
 
-# Get model predictions with newdata
-newdata = penguins_lm_3 %>% 
-  expand(bill_length_mm, species)
-head(newdata)
+# Get model predictions 
 lm_4_predict = lm_4 %>%
-  augment(newdat = newdata, se_fit=TRUE) %>%
-  mutate(lwr = .fitted - 1.96 * .se.fit, upr = .fitted + 1.96 * .se.fit) # Calculate 95% C.I. using SE
+  augment(se_fit=TRUE, interval="confidence") 
+
 # Plot the data and the model predictions
-ggplot() +
-  geom_point(aes(x = bill_length_mm, y = bill_depth_mm, color = species), data=penguins_lm_3) +
-  geom_ribbon(aes(ymin = lwr, ymax = upr, x = bill_length_mm, fill = species, color = NULL), alpha = .15, data=lm_4_predict) +
-  geom_line(data=lm_4_predict, aes(y = .fitted, x = bill_length_mm, color=species), size = 1)
+ggplot(data=lm_4_predict) +
+  geom_point(aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_ribbon(aes(ymin = .lower, ymax = .upper, x = bill_length_mm, fill = species, color = NULL), alpha = .15) +
+  geom_line(aes(y = .fitted, x = bill_length_mm, color=species), size = 1) + 
+  theme_bw()
 ```
 
 As we expected, the distinct slopes of bill depth vs. bill length for each of the 3 species are almost parallel. Since the AIC values are lower (i.e. better fit) for lm_3, we would select that as our final model instead of lm_4. If you look carefully at the lm_4 coefficient table (or if you hover over the species-specific model lines in the interactive ggiraph model prediction plot), you'll notice that for a given species, the model coefficients are exactly equal to the coefficients of a linear model for `bill_depth_mm ~ bill_length_mm` using just the data for a single species. For example, if you hover over the blue Gentoo model prediction line, you'll see the model formula is `y = 0.2*x + 5.25`. Recall that the model lm_2 that we built with the `gentoo` data had the same formula: `y = 0.2*x + 5.25`.
 
 ***
 
-### Multiple regression with 2 continuous variables
+### Multiple regression with 2 or more continuous variables
 
 When including multiple independent variables in a regression, especially multiple continuous variables, you need to check the collinearity of your predictors. If 2 predictors `x1` and `x2` are extremely collinear, then you can bias your interpretation of the model because you can't objectively determine how much variation in `y` is caused by `x1` vs. `x2`. To deal with this, you should calculate the Variance Inflation Factor of your independent variables. If the VIF = 1, then your independent variables are not correlated. There are different thresholds set for VIF, but generally, if the VIF > 4 or 5, you have a moderate problem with multicollinearity and if the VIF > 10, you have a big problem with multicollinearity in your model. This statistic should be reported and model results should be interpreted with the VIF in mind. If you are more interested in a mechanistic model (i.e. figuring out WHAT drives `y`) rather than a predictive model (i.e. getting the BEST estimate of `y`) then you may need to use your best human judgement to remove predictor variables until the model results are more interpretable. 
 
@@ -412,19 +410,18 @@ Now let's plot the model predictions. This is where things get a bit tricky, bec
 
 # Use expand to get full range of 1 variable, then add in median of other variable(s) from original data
 newdata = gentoo %>% 
-  expand(body_mass_g) %>% # Full range of body mass data (gets rid of other variables and repeated body mass values)
+  expand(body_mass_g) %>% # Full range of body mass data (gets rid of other variables and repeated body mass values) ## or just use select(body_mass_g)
   mutate(bill_length_mm = median(gentoo$bill_length_mm, na.rm=TRUE), 
          flipper_length_mm = median(gentoo$flipper_length_mm, na.rm=TRUE))
 
 lm_gentoo_3_predict = lm_gentoo_3 %>%
-  augment(newdata = newdata, se_fit=TRUE) %>% # ?augment.lm
-  mutate(lwr = .fitted - 1.96 * .se.fit, upr = .fitted + 1.96 * .se.fit) # Calculate 95% C.I. using SE
+  augment(newdata = newdata, se_fit=TRUE, interval="confidence")  # ?augment.lm
 
 # Plot the data and the model predictions
-ggplot() +
+ggplot(data=lm_gentoo_3_predict) +
   geom_point(aes(x = body_mass_g, y = bill_depth_mm), data=gentoo) + # original data
-  geom_ribbon(aes(ymin = lwr, ymax = upr, x = body_mass_g), alpha = .15, data=lm_gentoo_3_predict) +
-  geom_line(data=lm_gentoo_3_predict, aes(y = .fitted, x = body_mass_g), size = 1) +
+  geom_ribbon(aes(ymin = .lower, ymax = .upper, x = body_mass_g), alpha = .15) +
+  geom_line(aes(y = .fitted, x = body_mass_g)) +
   annotate("text", x=4250, y=17, label= paste0("flipper length = ", median(gentoo$flipper_length_mm, na.rm=TRUE), "mm")) +
   annotate("text", x=4250, y=16.5, label= paste0("bill length = ", median(gentoo$bill_length_mm, na.rm=TRUE), "mm")) 
 ```
@@ -462,10 +459,7 @@ penguins %>%
   summarize(mean_body_mass_g = mean(body_mass_g))
 
 # which species has higher body mass?
-# Note: penguins with body_mass_g=NA or sex=NA can't be included in ANOVA model
 penguins %>%
-  filter(!is.na(sex),
-         !is.na(body_mass_g)) %>% 
   group_by(species) %>%
   summarize(mean_body_mass_g = mean(body_mass_g, na.rm=TRUE))
 
