@@ -19,6 +19,10 @@ HW4 repo link: https://classroom.github.com/a/IfdMgCHo
 
 Final project repo link: https://classroom.github.com/a/Yecjwuvi
 
+-  HW_5_penguin_taxidermy - Assigned: 3/3/2022, Due: 3/17/2022
+
+HW5 repo link: https://classroom.github.com/a/-SoAM1ew
+
 ***
 
 #### Lesson 1: Intro to dplyr (data manipulation)
